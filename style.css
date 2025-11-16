@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  padding: 20px;
+  background: pink;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#cry-image {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 300px;
+  cursor: pointer;
+}
+
+.global-counter {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.case {
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.locked {
+  filter: grayscale(1);
+}
+
+.unlocking {
+  outline: 3px solid white;
+}
