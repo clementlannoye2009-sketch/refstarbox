@@ -3,7 +3,7 @@
 // tableau contenant les 70 sons
 const sons = [];
 for (let i = 1; i <= 70; i++) {
-  sons[i] = new Audio(`sons/cri${i}.mp3`);
+  sons[i] = new Audio(`son/cri${i}.mp3`);
   sons[i].preload = "auto";
 }
 
@@ -61,7 +61,7 @@ function render() {
 
     if (!cri.unlocked) {
       div.classList.add("locked");
-      div.innerHTML = cri.nomBloque;
+      div.innerHTML = cri.nomBloque; // aucune ligne de compteur → supprimé
     } else {
       div.innerHTML = cri.nomDebloque;
     }
@@ -74,15 +74,12 @@ function render() {
       globalClicks++;
       updateGlobalCounter();
 
-      // son : prend le prochain à débloquer
       const cible = nextToUnlock();
       const idSon = cible ? cible.id : cri.id;
       playSound(idSon);
 
-      // incrémente le compteur du prochain
       if (cible) cible.compteur++;
 
-      // déblocage automatique tous les 100 clics
       cris.forEach(c => {
         const seuil = (c.id - 1) * 100;
         if (globalClicks >= seuil) c.unlocked = true;
@@ -95,7 +92,6 @@ function render() {
   });
 }
 
-// clic sur l'image → joue le son du prochain
 img.addEventListener("click", () => {
   const cible = nextToUnlock();
   const idSon = cible ? cible.id : 1;
