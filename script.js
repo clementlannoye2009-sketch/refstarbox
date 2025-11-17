@@ -18,7 +18,6 @@ for (let i = 1; i <= 70; i++) {
   cris.push({
     id: i,
     unlocked: i === 1,
-    compteur: 0,
     nomDebloque: `CRIS ${i}`,
     nomBloque: "🔒"
   });
@@ -30,15 +29,12 @@ const grid = document.getElementById("grid-cris");
 const globalCounterDiv = document.getElementById("global-counter");
 const img = document.getElementById("cry-image");
 
-// son qui relance à chaque clic
+// FORCE le redémarrage du son à chaque clic
 function playSound(id) {
-  try {
-    const audio = sons[id];
-    audio.currentTime = 0;
-    audio.play().catch(e => console.warn("Erreur audio :", e));
-  } catch (e) {
-    console.error("Impossible de jouer le son", e);
-  }
+  const audio = sons[id];
+  audio.pause();
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
 }
 
 function nextToUnlock() {
@@ -61,13 +57,9 @@ function render() {
 
     if (!cri.unlocked) {
       div.classList.add("locked");
-      div.innerHTML = cri.nomBloque; // aucune ligne de compteur → supprimé
+      div.innerHTML = cri.nomBloque;
     } else {
       div.innerHTML = cri.nomDebloque;
-    }
-
-    if (next && cri.id === next.id) {
-      div.classList.add("unlocking");
     }
 
     div.onclick = () => {
@@ -78,8 +70,7 @@ function render() {
       const idSon = cible ? cible.id : cri.id;
       playSound(idSon);
 
-      if (cible) cible.compteur++;
-
+      // déblocage automatique : chaque 100 clics
       cris.forEach(c => {
         const seuil = (c.id - 1) * 100;
         if (globalClicks >= seuil) c.unlocked = true;
@@ -92,6 +83,7 @@ function render() {
   });
 }
 
+// clic sur l'image → joue le prochain son
 img.addEventListener("click", () => {
   const cible = nextToUnlock();
   const idSon = cible ? cible.id : 1;
