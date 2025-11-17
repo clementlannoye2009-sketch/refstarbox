@@ -1,53 +1,26 @@
 // ------- CONFIG ------
 
 // un seul son
-const sons = {
-  1: new Audio("son/cri1.mp3")
-};
-sons[1].preload = "auto";
-
-// couleurs alternées
-const couleurs = ["#ff3b30", "#007aff", "#ffcc00", "#34c759"];
-
-// stockage de la seule case
-let cris = [{
-  id: 1,
-  unlocked: true,
-  compteur: 0,
-  nomDebloque: "CRIS 1"
-}];
+const son = new Audio("son/cri1.mp3");
+son.preload = "auto";
 
 // ------- FONCTIONS ------
 
 const grid = document.getElementById("grid-cris");
+const globalCounterDiv = document.getElementById("global-counter");
 const img = document.getElementById("cry-image");
 
-// lecture du seul son existant
+// relancer le son à chaque clic
 function playSound() {
-  const audio = sons[1];
-  audio.currentTime = 0;
-  audio.play().catch(e => console.warn("Erreur audio :", e));
+  try {
+    son.currentTime = 0;
+    son.play().catch(e => console.warn("Erreur audio :", e));
+  } catch (e) {
+    console.error("Impossible de jouer le son", e);
+  }
 }
 
-function render() {
-  grid.innerHTML = "";
-
-  cris.forEach((cri, index) => {
-    const div = document.createElement("div");
-    div.className = "case";
-    div.style.background = couleurs[index % couleurs.length];
-    div.textContent = cri.nomDebloque;
-
-    div.onclick = () => {
-      playSound();
-    };
-
-    grid.appendChild(div);
-  });
-}
-
-// clic sur l’image → joue le cri1
-img.addEventListener("click", playSound);
-
-// lancer l’affichage
-render();
+// clic sur l’image
+img.addEventListener("click", () => {
+  playSound();
+});
