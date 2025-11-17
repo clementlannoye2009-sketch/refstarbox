@@ -1,103 +1,53 @@
 // ------- CONFIG ------
 
-// tableau contenant les 70 sons
-const sons = [];
-for (let i = 1; i <= 70; i++) {
-  sons[i] = new Audio(`son/cri${i}.mp3`);
-  sons[i].preload = "auto";
-}
+// un seul son
+const sons = {
+  1: new Audio("son/cri1.mp3")
+};
+sons[1].preload = "auto";
 
 // couleurs alternées
-const couleurs = ["#ff3b30", "#007aff", "#ffcc00", "#34c759", "#ff2d55", "#ff9500", "#af52de", "#5ac8fa"];
+const couleurs = ["#ff3b30", "#007aff", "#ffcc00", "#34c759"];
 
-// stockage des cases
-let cris = [];
-let globalClicks = 0;
-
-for (let i = 1; i <= 70; i++) {
-  cris.push({
-    id: i,
-    unlocked: i === 1,
-    compteur: 0,
-    nomDebloque: `CRIS ${i}`,
-    nomBloque: "🔒"
-  });
-}
+// stockage de la seule case
+let cris = [{
+  id: 1,
+  unlocked: true,
+  compteur: 0,
+  nomDebloque: "CRIS 1"
+}];
 
 // ------- FONCTIONS ------
 
 const grid = document.getElementById("grid-cris");
-const globalCounterDiv = document.getElementById("global-counter");
 const img = document.getElementById("cry-image");
 
-// son qui relance à chaque clic
-function playSound(id) {
-  try {
-    const audio = sons[id];
-    audio.currentTime = 0;
-    audio.play().catch(e => console.warn("Erreur audio :", e));
-  } catch (e) {
-    console.error("Impossible de jouer le son", e);
-  }
-}
-
-function nextToUnlock() {
-  return cris.find(c => !c.unlocked);
-}
-
-function updateGlobalCounter() {
-  globalCounterDiv.textContent = `${globalClicks} cris`;
+// lecture du seul son existant
+function playSound() {
+  const audio = sons[1];
+  audio.currentTime = 0;
+  audio.play().catch(e => console.warn("Erreur audio :", e));
 }
 
 function render() {
   grid.innerHTML = "";
 
-  const next = nextToUnlock();
-
   cris.forEach((cri, index) => {
     const div = document.createElement("div");
     div.className = "case";
     div.style.background = couleurs[index % couleurs.length];
-
-    if (!cri.unlocked) {
-      div.classList.add("locked");
-      div.innerHTML = cri.nomBloque;
-    } else {
-      div.innerHTML = cri.nomDebloque;
-    }
-
-    if (next && cri.id === next.id) {
-      div.classList.add("unlocking");
-    }
+    div.textContent = cri.nomDebloque;
 
     div.onclick = () => {
-      globalClicks++;
-      updateGlobalCounter();
-
-      // son : prend le prochain à débloquer
-      const cible = nextToUnlock();
-      const idSon = cible ? cible.id : cri.id;
-      playSound(idSon);
-
-      // déblocage automatique tous les 100 clics
-      cris.forEach(c => {
-        const seuil = (c.id - 1) * 100;
-        if (globalClicks >= seuil) c.unlocked = true;
-      });
-
-      render();
+      playSound();
     };
 
     grid.appendChild(div);
   });
 }
 
-// clic sur l'image → joue le son du prochain
-img.addEventListener("click", () => {
-  const cible = nextToUnlock();
-  const idSon = cible ? cible.id : 1;
-  playSound(idSon);
-});
+// clic sur l’image → joue le cri1
+img.addEventListener("click", playSound);
 
-updateGlobalCounter();
+// lancer l’affichage
 render();
